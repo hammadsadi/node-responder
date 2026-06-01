@@ -1,9 +1,21 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
+import { RequestHandler, Request, Response, NextFunction } from "express";
 
-export interface Pagination {
-  page?: number;
-  limit?: number;
-  total?: number;
+//  Options
+
+export interface ResponderOptions {
+  /**
+   * When true, logs every request to stdout with method, URL, status, and response time.
+   * @default false
+   */
+  logger?: boolean;
+}
+
+//  Pagination
+
+export interface PaginationInput {
+  page?: number | string;
+  limit?: number | string;
+  total?: number | string;
 }
 
 export interface PaginationMeta {
@@ -15,13 +27,15 @@ export interface PaginationMeta {
   hasPrevPage: boolean;
 }
 
+//  Response shapes
+
 export interface ApiMeta {
   timestamp: string;
   statusCode: number;
   pagination?: PaginationMeta;
 }
 
-export interface ApiSuccessResponse<T = any> {
+export interface ApiSuccessResponse<T = unknown> {
   success: true;
   message: string;
   data: T;
@@ -32,40 +46,42 @@ export interface ApiErrorResponse {
   success: false;
   message: string;
   data: null;
-  errors: any | null;
+  errors: unknown | null;
   meta: ApiMeta;
 }
+
+//  Express augmentation
 
 declare global {
   namespace Express {
     interface Response {
-      /** Send a success response */
-      success<T = any>(
+      // Generic
+      /** Send a success response with optional data, message, and status code */
+      success<T = unknown>(
         data?: T,
         message?: string,
         statusCode?: number,
       ): Response;
-
-      /** Send an error response */
-      error(message?: string, statusCode?: number, errors?: any): Response;
-
-      /** Send a paginated response */
-      paginate<T = any>(
+      /** Send an error response with optional message, status code, and errors */
+      error(message?: string, statusCode?: number, errors?: unknown): Response;
+      /** Send a paginated success response */
+      paginate<T = unknown>(
         data?: T[],
         message?: string,
-        pagination?: Pagination,
+        pagination?: PaginationInput,
       ): Response;
 
-      // Shorthand methods
+      // 2xx
       /** 200 OK */
-      ok<T = any>(data?: T, message?: string): Response;
+      ok<T = unknown>(data?: T, message?: string): Response;
       /** 201 Created */
-      created<T = any>(data?: T, message?: string): Response;
+      created<T = unknown>(data?: T, message?: string): Response;
       /** 204 No Content */
       noContent(): Response;
 
+      // 4xx
       /** 400 Bad Request */
-      badRequest(message?: string, errors?: any): Response;
+      badRequest(message?: string, errors?: unknown): Response;
       /** 401 Unauthorized */
       unauthorized(message?: string): Response;
       /** 403 Forbidden */
@@ -75,18 +91,34 @@ declare global {
       /** 409 Conflict */
       conflict(message?: string): Response;
       /** 422 Unprocessable Entity */
-      unprocessable(message?: string, errors?: any): Response;
+      unprocessable(message?: string, errors?: unknown): Response;
+      /** 429 Too Many Requests — optionally sets Retry-After header */
+      tooManyRequests(message?: string, retryAfter?: number | string): Response;
+
+      // 5xx
       /** 500 Internal Server Error */
       serverError(message?: string): Response;
     }
   }
 }
 
-export declare function apiResponse(): RequestHandler;
+//  Exported functions
+
+/** Express middleware — attaches all response helpers to res */
+export declare function responder(options?: ResponderOptions): RequestHandler;
+
+/** Wraps an async route handler and forwards errors to next() automatically */
+export declare function asyncHandler(
+  fn: (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => Promise<unknown> | unknown,
+): RequestHandler;
 
 export declare function successResponse(
   res: Response,
-  data?: any,
+  data?: unknown,
   message?: string,
   statusCode?: number,
 ): Response;
@@ -95,14 +127,14 @@ export declare function errorResponse(
   res: Response,
   message?: string,
   statusCode?: number,
-  errors?: any,
+  errors?: unknown,
 ): Response;
 
 export declare function paginatedResponse(
   res: Response,
-  data?: any[],
+  data?: unknown[],
   message?: string,
-  pagination?: Pagination,
+  pagination?: PaginationInput,
 ): Response;
 
-export default apiResponse;
+export default responder;
