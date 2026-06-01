@@ -139,6 +139,27 @@ router.use(responder());
 
 ## 📖 API Reference
 
+### Quick Reference
+
+| Method                                       | Status | When to use                                |
+| -------------------------------------------- | ------ | ------------------------------------------ |
+| `res.ok(data?, message?)`                    | 200    | Successful GET request                     |
+| `res.created(data?, message?)`               | 201    | New resource created                       |
+| `res.noContent()`                            | 204    | Delete or update with no data to return    |
+| `res.success(data?, message?, statusCode?)`  | custom | Custom success status code                 |
+| `res.badRequest(message?, errors?)`          | 400    | Validation failed                          |
+| `res.unauthorized(message?)`                 | 401    | Not logged in or no token                  |
+| `res.forbidden(message?)`                    | 403    | Logged in but no permission                |
+| `res.notFound(message?)`                     | 404    | Resource does not exist                    |
+| `res.conflict(message?)`                     | 409    | Duplicate data (e.g. email already exists) |
+| `res.unprocessable(message?, errors?)`       | 422    | Business logic validation failed           |
+| `res.tooManyRequests(message?, retryAfter?)` | 429    | Rate limit exceeded                        |
+| `res.serverError(message?)`                  | 500    | Unexpected server-side error               |
+| `res.error(message?, statusCode?, errors?)`  | custom | Custom error status code                   |
+| `res.paginate(data, message?, pagination?)`  | 200    | Paginated list response                    |
+
+---
+
 ### ✅ Success Methods
 
 ---
