@@ -1,6 +1,6 @@
 {
   "name": "node-responder",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Modern, standardized API response middleware for Express.js — with TypeScript support, pagination, and shorthand methods.",
   "main": "src/index.js",
   "types": "types/index.d.ts",
