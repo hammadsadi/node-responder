@@ -6,6 +6,7 @@
 [![license](https://img.shields.io/npm/l/node-responder.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-supported-blue.svg)](types/index.d.ts)
 [![zero dependencies](https://img.shields.io/badge/dependencies-0-green.svg)]()
+[![npm downloads](https://img.shields.io/npm/dm/node-responder.svg)](https://www.npmjs.com/package/node-responder)
 
 Stop writing repetitive `res.status(200).json({ success: true, data: ... })` in every route. `node-responder` adds clean, consistent response helpers directly to Express's `res` object.
 
@@ -245,6 +246,11 @@ app.get("/users", async (req, res) => {
   res.ok(users, "Users fetched");
 });
 ```
+
+## 🔗 Links
+
+- [npm](https://www.npmjs.com/package/node-responder)
+- [GitHub](https://github.com/hammadsadi/node-responder)
 
 ---
 
